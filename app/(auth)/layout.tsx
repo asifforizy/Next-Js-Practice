@@ -1,10 +1,14 @@
+import { Navbar } from '@/components/shared/navbar'
+import { getMe } from '@/service/getMe'
 import React from 'react'
 
 
-const loginLayout = ({children}:{ children: React.ReactNode}) => {
+const loginLayout = async({ children }: { children: React.ReactNode }) => {
+   const user = await getMe()
   return (
     <div className='max-w-7xl mx-auto '>
-        {children}
+      <Navbar user={user}></Navbar>
+      {children}
     </div>
   )
 }
