@@ -1,16 +1,19 @@
-import { Navbar } from '@/components/shared/navbar'
-import { getMe } from '@/service/getMe'
-import React from 'react'
+import { Navbar } from "@/components/shared/navbar";
+import { getMe } from "@/service/getMe";
 
+const LoginLayout = async ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
+  const user = await getMe();
 
-const loginLayout = async({ children }: { children: React.ReactNode }) => {
-   const user = await getMe()
   return (
-    <div className='max-w-7xl mx-auto '>
-      <Navbar user={user}></Navbar>
+    <div >
+       <Navbar user={user} />
       {children}
     </div>
-  )
-}
+  );
+};
 
-export default loginLayout
+export default LoginLayout;

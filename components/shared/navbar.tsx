@@ -12,6 +12,7 @@ import { User, Settings, LogOut, UserCircle } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { logout } from '@/service/logout'
 import { toast } from 'sonner'
+import { Button } from '../ui/button'
 
 // Navigation items array - easy to maintain and update
 const navItems = [
@@ -28,58 +29,58 @@ const userMenuItems = [
 ]
 
 type IUser = {
-    success : boolean,
-    message : string,
-    data : {
-        profile : {
-            id : string,
-            name : string,
-            email : string,
-            activeStatus : string,
-            role : string,
-            createdAt : string,
-            updatedAt : string,
-            profile : {
-                id : string,
-                profilePhoto : string,
-                bio : string | null,
-                userId : string,
-                createdAt : string,
-                updatedAt : string
+    success: boolean,
+    message: string,
+    data: {
+        profile: {
+            id: string,
+            name: string,
+            email: string,
+            activeStatus: string,
+            role: string,
+            createdAt: string,
+            updatedAt: string,
+            profile: {
+                id: string,
+                profilePhoto: string,
+                bio: string | null,
+                userId: string,
+                createdAt: string,
+                updatedAt: string
             }
         }
     }
 }
 
 type NavbarProps = {
-    user : IUser
+    user: IUser
 }
 
-export function Navbar({user}: NavbarProps) {
+export function Navbar({ user }: NavbarProps) {
 
     const router = useRouter()
-  const handleUserMenuAction = async (action: string) => {
+    const handleUserMenuAction = async (action: string) => {
 
-    if(action === "logout"){
-        await logout();
-        toast.success("User Logged Out Successfully!");
-        router.push("/login");
-    }
-  };
+        if (action === "logout") {
+            await logout();
+            toast.success("User Logged Out Successfully!");
+            router.push("/login");
+        }
+    };
 
     return (
-        <nav className="border-b border-border bg-background">
+        <nav className="border-b ">
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                <div className="flex h-16 items-center justify-between">
-                    {/* Logo */}
-                    <div className="shrink-0">
-                        <Link href="/" className="text-2xl font-bold text-primary">
+                <div className="mx-auto max-w-7xl h-16 flex items-center">
+                    {/* Left */}
+                    <div className="flex-1">
+                        <Link href="/" className="text-2xl font-bold">
                             Prisma Press
                         </Link>
                     </div>
 
                     {/* Nav Links */}
-                    <div className="hidden md:flex items-center gap-8">
+                    <div className="hidden md:flex justify-center gap-8 flex-1">
                         {navItems.map((item) => (
                             <Link
                                 key={item.href}
@@ -92,39 +93,49 @@ export function Navbar({user}: NavbarProps) {
                     </div>
 
                     {/* User Dropdown */}
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <div className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity">
-                                <div className="size-8 rounded-full flex items-center justify-center bg-gray-100">
-                                    <User className="size-4" />
-                                </div>
+                    <div className="flex-1 flex justify-end">
+                        {
 
-                            </div>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="w-56">
-                            <div className="px-2 py-1.5">
-                                <p className="text-sm font-medium">{user.data?.profile.name || "name"}</p>
-                                <p className="text-xs text-muted-foreground">{user.data?.profile.email || "email"}</p>
-                            </div>
-                            <DropdownMenuSeparator />
-                            {userMenuItems.map((item) => {
-                                const Icon = item.icon
-                                return (
-                                    <DropdownMenuItem key={item.href} asChild>
-                                        <Link href={item.href} className="cursor-pointer flex items-center gap-2">
-                                            <Icon className="size-4" />
-                                            {item.label}
-                                        </Link>
-                                    </DropdownMenuItem>
-                                )
-                            })}
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem onClick={async ()=>{await handleUserMenuAction("logout")}} className="text-red-600 flex items-center gap-2 cursor-pointer">
-                                <LogOut className="size-4" />
-                                Logout
-                            </DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
+                            user.success ? (
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                        <div className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity">
+                                            <div className="size-8 rounded-full flex items-center justify-center bg-gray-100">
+                                                <User className="size-4" />
+                                            </div>
+
+                                        </div>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent align="end" className="w-56">
+                                        <div className="px-2 py-1.5">
+                                            <p className="text-sm font-medium">{user.data?.profile.name || "name"}</p>
+                                            <p className="text-xs text-muted-foreground">{user.data?.profile.email || "email"}</p>
+                                        </div>
+                                        <DropdownMenuSeparator />
+                                        {userMenuItems.map((item) => {
+                                            const Icon = item.icon
+                                            return (
+                                                <DropdownMenuItem key={item.href} asChild>
+                                                    <Link href={item.href} className="cursor-pointer flex items-center gap-2">
+                                                        <Icon className="size-4" />
+                                                        {item.label}
+                                                    </Link>
+                                                </DropdownMenuItem>
+                                            )
+                                        })}
+                                        <DropdownMenuSeparator />
+                                        <DropdownMenuItem onClick={async () => { await handleUserMenuAction("logout") }} className="text-red-600 flex items-center gap-2 cursor-pointer">
+                                            <LogOut className="size-4" />
+                                            Logout
+                                        </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+                            ) :
+                                <Link href="/login">
+                                    <Button className='cursor-pointer'>Login</Button>
+                                </Link>
+                        }
+                    </div>
                 </div>
             </div>
         </nav>
