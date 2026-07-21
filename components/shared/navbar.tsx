@@ -1,7 +1,6 @@
 'use client'
 
 import Link from 'next/link'
-import { Button } from '@/components/ui/button'
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -10,6 +9,9 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { User, Settings, LogOut, UserCircle } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { logout } from '@/service/logout'
+import { toast } from 'sonner'
 
 // Navigation items array - easy to maintain and update
 const navItems = [
@@ -54,6 +56,17 @@ type NavbarProps = {
 }
 
 export function Navbar({user}: NavbarProps) {
+
+    const router = useRouter()
+  const handleUserMenuAction = async (action: string) => {
+
+    if(action === "logout"){
+        await logout();
+        toast.success("User Logged Out Successfully!");
+        router.push("/login");
+    }
+  };
+
     return (
         <nav className="border-b border-border bg-background">
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -106,7 +119,7 @@ export function Navbar({user}: NavbarProps) {
                                 )
                             })}
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem className="text-red-600 flex items-center gap-2 cursor-pointer">
+                            <DropdownMenuItem onClick={async ()=>{await handleUserMenuAction("logout")}} className="text-red-600 flex items-center gap-2 cursor-pointer">
                                 <LogOut className="size-4" />
                                 Logout
                             </DropdownMenuItem>
