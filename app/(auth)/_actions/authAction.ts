@@ -2,6 +2,7 @@
 
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import jwt, { JwtPayload } from "jsonwebtoken";
 
 type LoginState = {
   success: true;
@@ -13,7 +14,10 @@ type LoginState = {
   };
 };
 
-export const loginAction = async (prevState: LoginState, formData: FormData) => {
+export const loginAction = async (
+  prevState: LoginState,
+  formData: FormData
+) => {
   const email = formData.get("email");
   const password = formData.get("password");
 
@@ -22,7 +26,8 @@ export const loginAction = async (prevState: LoginState, formData: FormData) => 
     password,
   };
 
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}/api/auth/login`,
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/api/auth/login`,
     {
       method: "POST",
       headers: {
@@ -33,8 +38,6 @@ export const loginAction = async (prevState: LoginState, formData: FormData) => 
   );
 
   const result = await res.json();
-
-
 
   if (result.success) {
     const cookieStore = await cookies();
@@ -50,7 +53,15 @@ export const loginAction = async (prevState: LoginState, formData: FormData) => 
       sameSite: "lax",
     });
 
-    redirect("/dashboard");
+    const decodedToken = jwt.decode(result.data.accessToken) as JwtPayload;
+
+    if (decodedToken.role === "USER") {
+      redirect("/dashboard");
+    } else if (decodedToken.role === "ADMIN") {
+      redirect("/admin-dashboard");
+    } else if (decodedToken.role === "AUTHOR") {
+      redirect("/author-dashboard");
+    }
   }
 
   return result;
